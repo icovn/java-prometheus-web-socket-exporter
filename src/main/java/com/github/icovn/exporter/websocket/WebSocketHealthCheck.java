@@ -31,8 +31,13 @@ public class WebSocketHealthCheck extends HealthCheck {
         URI uri = new URI(request.getUrl());
         Map<String, String> headers = new HashMap<>();
         MyWebSocketClient myWebSocketClient = new MyWebSocketClient(uri, headers);
-        myWebSocketClient.connect();
+        myWebSocketClient.connectBlocking();
+        myWebSocketClient.send("CONNECT");
+        myWebSocketClient.close();
       }catch (URISyntaxException ex){
+        log.error("(checkWebSocket)uri: {}, ex: {}", request.getUrl(), ex.getMessage());
+        return false;
+      } catch (InterruptedException ex) {
         log.error("(checkWebSocket)uri: {}, ex: {}", request.getUrl(), ex.getMessage());
         return false;
       }
