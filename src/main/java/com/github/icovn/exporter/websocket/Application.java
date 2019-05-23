@@ -26,7 +26,10 @@ public class Application {
         .setGaugeMetricName("web_socket_health_check")
         .setGaugeMetricHelp("Web socket health check.")
         .build();
-    healthChecksMetrics.addHealthCheck("state", new WebSocketHealthCheck(configuration.getRequests()));
+
+    for(SocketRequest request: configuration.getRequests()){
+      healthChecksMetrics.addHealthCheck(request.getUrl(), new WebSocketHealthCheck(request));
+    }
 
     new WebSocketExporter(healthChecksMetrics, configuration.getPort()).export();
   }
@@ -35,9 +38,9 @@ public class Application {
     try{
       Yaml yaml = new Yaml(new Constructor(SocketConfiguration.class));
       InputStream inputStream = new FileInputStream(path);
-      SocketConfiguration configuration = yaml.load(inputStream);
-      return configuration;
-    }catch (FileNotFoundException ex){
+
+      return yaml.load(inputStream);
+    } catch (FileNotFoundException ex){
       log.error("(readConfig)ex: {}", ex.getMessage());
       return null;
     }

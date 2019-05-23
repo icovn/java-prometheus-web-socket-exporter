@@ -35,14 +35,9 @@
 
     <!--UTIL-->
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.8</version>
+      <groupId>com.github.icovn</groupId>
+      <artifactId>util</artifactId>
+      <version>${icovn-util-version}</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
@@ -57,6 +52,10 @@
       <version>1.4.0</version>
     </dependency>
   </dependencies>
+
+  <properties>
+    <icovn-util-version>2.31-RELEASE</icovn-util-version>
+  </properties>
 
   <build>
     <plugins>
@@ -96,4 +95,15 @@
 
     <finalName>${project.artifactId}</finalName>
   </build>
+
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>bintray-icovn-maven-repository</id>
+      <name>bintray</name>
+      <url>https://dl.bintray.com/icovn/maven-repository</url>
+    </repository>
+  </repositories>
 </project>

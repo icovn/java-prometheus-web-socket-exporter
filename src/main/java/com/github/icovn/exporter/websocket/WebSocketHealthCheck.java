@@ -1,22 +1,22 @@
 package com.github.icovn.exporter.websocket;
 
+import com.github.icovn.util.ExceptionUtil;
 import com.github.strengthened.prometheus.healthchecks.HealthCheck;
 import com.github.strengthened.prometheus.healthchecks.HealthStatus;
+import eu.mivrenik.stomp.client.StompClient;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.java_websocket.drafts.Draft_6455;
 
 @Slf4j
 public class WebSocketHealthCheck extends HealthCheck {
 
-  private final List<SocketRequest> requests;
+  private final SocketRequest request;
 
-  public WebSocketHealthCheck(
-      List<SocketRequest> requests) {
-    this.requests = requests;
+  public WebSocketHealthCheck(SocketRequest request) {
+    this.request = request;
   }
 
   @Override
@@ -25,22 +25,37 @@ public class WebSocketHealthCheck extends HealthCheck {
   }
 
   private boolean checkWebSocket() {
-    log.info("(checkWebSocket)requests: {}", requests);
-    for(SocketRequest request: requests){
-      try{
-        URI uri = new URI(request.getUrl());
+    log.info("(checkWebSocket)request: {}", request);
+    try{
+      URI uri = new URI(request.getUrl());
+      if(request.getIsStomp()){
         Map<String, String> headers = new HashMap<>();
-        MyWebSocketClient myWebSocketClient = new MyWebSocketClient(uri, headers);
+        for(SocketHeader header: request.getHeaders()){
+          headers.put(header.getKey(), header.getValue());
+        }
+
+        StompClient client = new StompClient(uri, new Draft_6455(), headers, 5000);
+        log.info("(checkWebSocket)start connect");
+        client.connectBlocking();
+        log.info("(checkWebSocket)connect state: {}", client.isStompConnected());
+
+        if(client.isStompConnected()){
+          client.subscribe("/topic/greetings", message -> {
+            log.info("(checkWebSocket)server message: " + message);
+            // Disconnect
+            client.close();
+          });
+        }else {
+          return false;
+        }
+        log.info("(checkWebSocket)end connect");
+      } else {
+        MyWebSocketClient myWebSocketClient = new MyWebSocketClient(uri);
         myWebSocketClient.connectBlocking();
-        myWebSocketClient.send("CONNECT");
         myWebSocketClient.close();
-      }catch (URISyntaxException ex){
-        log.error("(checkWebSocket)uri: {}, ex: {}", request.getUrl(), ex.getMessage());
-        return false;
-      } catch (InterruptedException ex) {
-        log.error("(checkWebSocket)uri: {}, ex: {}", request.getUrl(), ex.getMessage());
-        return false;
       }
+    } catch (Exception ex) {
+      log.error("(checkWebSocket)uri: {}, ex: {}", request.getUrl(), ExceptionUtil.getFullStackTrace(ex, true));
     }
 
     return true;

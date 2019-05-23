@@ -1,11 +1,12 @@
 port: 9191
+
 requests:
   - url: wss://beta-dev-ws.kidtopi.com/ws
-    headers:
-      - CONNECT \naccept-version:1.2,1.1,1.0 \nheart-beat:10000,10000
-      - SUBSCRIBE
+    isStomp: false
   - url: wss://beta-qa-ws.kidtopi.com/ws
     headers:
-      - CONNECT \nauthorization:Bearer abc123
-      - SUBSCRIBE
-
+      - key: room-id
+        value: 6e13e241-06f3-453b-a076-5b68ea1b6d0a
+      - key: heart-beat
+        value: 10000,10000
+    isStomp: true

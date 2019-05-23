@@ -8,5 +8,7 @@ public class SocketRequest {
 
   private String url;
 
-  private List<String> headers;
+  private List<SocketHeader> headers;
+
+  private Boolean isStomp;
 }

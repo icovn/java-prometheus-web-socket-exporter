@@ -1,7 +1,6 @@
 package com.github.icovn.exporter.websocket;
 
 import java.net.URI;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -9,9 +8,8 @@ import org.java_websocket.handshake.ServerHandshake;
 @Slf4j
 public class MyWebSocketClient extends WebSocketClient {
 
-  public MyWebSocketClient(URI serverUri,
-      Map<String, String> httpHeaders) {
-    super(serverUri, httpHeaders);
+  public MyWebSocketClient(URI serverUri) {
+    super(serverUri);
   }
 
   @Override
