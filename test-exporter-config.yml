@@ -1,0 +1,11 @@
+port: 9191
+requests:
+  - url: wss://beta-dev-ws.kidtopi.com/ws
+    headers:
+      - CONNECT \naccept-version:1.2,1.1,1.0 \nheart-beat:10000,10000
+      - SUBSCRIBE
+  - url: wss://beta-qa-ws.kidtopi.com/ws
+    headers:
+      - CONNECT \nauthorization:Bearer abc123
+      - SUBSCRIBE
+
