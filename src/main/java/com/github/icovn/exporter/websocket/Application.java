@@ -11,23 +11,24 @@ import org.yaml.snakeyaml.constructor.Constructor;
 @Slf4j
 public class Application {
 
-  public static void main( String[] args ) throws Exception {
+  public static void main(String[] args) throws Exception {
     log.info("(main)args: {}", args);
-    if(args == null || args.length < 1){
+    if (args == null || args.length < 1) {
       throw new RuntimeException("Please set configuration file path when run");
     }
 
     SocketConfiguration configuration = readConfig(args[0]);
-    if(configuration == null){
+    if (configuration == null) {
       throw new RuntimeException("Configuration file not found or invalid, file path: " + args[1]);
     }
 
-    HealthChecksCollector healthChecksMetrics = HealthChecksCollector.Builder.of()
-        .setGaugeMetricName("web_socket_health_check")
-        .setGaugeMetricHelp("Web socket health check.")
-        .build();
+    HealthChecksCollector healthChecksMetrics =
+        HealthChecksCollector.Builder.of()
+            .setGaugeMetricName("web_socket_health_check")
+            .setGaugeMetricHelp("Web socket health check.")
+            .build();
 
-    for(SocketRequest request: configuration.getRequests()){
+    for (SocketRequest request : configuration.getRequests()) {
       healthChecksMetrics.addHealthCheck(request.getUrl(), new WebSocketHealthCheck(request));
     }
 
@@ -35,12 +36,12 @@ public class Application {
   }
 
   private static SocketConfiguration readConfig(String path) {
-    try{
+    try {
       Yaml yaml = new Yaml(new Constructor(SocketConfiguration.class));
       InputStream inputStream = new FileInputStream(path);
 
       return yaml.load(inputStream);
-    } catch (FileNotFoundException ex){
+    } catch (FileNotFoundException ex) {
       log.error("(readConfig)ex: {}", ex.getMessage());
       return null;
     }

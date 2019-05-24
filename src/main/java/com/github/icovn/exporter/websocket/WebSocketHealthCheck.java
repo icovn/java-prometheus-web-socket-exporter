@@ -3,7 +3,6 @@ package com.github.icovn.exporter.websocket;
 import com.github.icovn.util.ExceptionUtil;
 import com.github.strengthened.prometheus.healthchecks.HealthCheck;
 import com.github.strengthened.prometheus.healthchecks.HealthStatus;
-import eu.mivrenik.stomp.client.StompClient;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,36 +25,42 @@ public class WebSocketHealthCheck extends HealthCheck {
 
   private boolean checkWebSocket() {
     log.info("(checkWebSocket)request: {}", request);
-    try{
+    try {
       URI uri = new URI(request.getUrl());
-      if(request.getIsStomp()){
+      if (request.getIsStomp()) {
         Map<String, String> headers = new HashMap<>();
-        for(SocketHeader header: request.getHeaders()){
+        for (SocketHeader header : request.getHeaders()) {
           headers.put(header.getKey(), header.getValue());
         }
+        log.info("(checkWebSocket)headers: {}", headers);
 
         MyStompClient client = new MyStompClient(uri, new Draft_6455(), headers, 5000);
         log.info("(checkWebSocket)start connect");
         client.connectBlocking();
+
+        while (client.isConnecting()){
+          log.info("(checkWebSocket)connecting ...");
+          Thread.sleep(1000);
+        }
         log.info("(checkWebSocket)connect state: {}", client.isStompConnected());
 
-        if(client.isStompConnected()){
-          client.subscribe("/topic/greetings", message -> {
-            log.info("(checkWebSocket)server message: " + message);
-            // Disconnect
-            client.close();
-          });
-        }else {
+        if (client.isStompConnected()) {
+          client.close();
+          return true;
+        } else {
+          client.close();
           return false;
         }
-        log.info("(checkWebSocket)end connect");
       } else {
         MyWebSocketClient myWebSocketClient = new MyWebSocketClient(uri);
         myWebSocketClient.connectBlocking();
         myWebSocketClient.close();
       }
     } catch (Exception ex) {
-      log.error("(checkWebSocket)uri: {}, ex: {}", request.getUrl(), ExceptionUtil.getFullStackTrace(ex, true));
+      log.error(
+          "(checkWebSocket)uri: {}, ex: {}",
+          request.getUrl(),
+          ExceptionUtil.getFullStackTrace(ex, true));
     }
 
     return true;

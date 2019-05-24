@@ -42,22 +42,22 @@ public class StompClient extends WebSocketClient {
     /**
      * Current STOMP implementation version.
      */
-    private static final String STOMP_VERSION = "1.2";
+    protected static final String STOMP_VERSION = "1.2";
 
     /**
      * STOMP topic subscription listeners.
      */
-    private Map<Integer, StompSubscription> subscriptions = new HashMap<>();
+    protected Map<Integer, StompSubscription> subscriptions = new HashMap<>();
 
     /**
      * STOMP connection status.
      */
-    private boolean stompConnected;
+    protected boolean stompConnected;
 
     /**
      * STOMP connection listener.
      */
-    private StompConnectionListener stompConnectionListener;
+    protected StompConnectionListener stompConnectionListener;
 
     /**
      * {@inheritDoc}
