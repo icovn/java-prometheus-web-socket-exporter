@@ -34,7 +34,7 @@ public class WebSocketHealthCheck extends HealthCheck {
           headers.put(header.getKey(), header.getValue());
         }
 
-        StompClient client = new StompClient(uri, new Draft_6455(), headers, 5000);
+        MyStompClient client = new MyStompClient(uri, new Draft_6455(), headers, 5000);
         log.info("(checkWebSocket)start connect");
         client.connectBlocking();
         log.info("(checkWebSocket)connect state: {}", client.isStompConnected());
