@@ -1,12 +1,12 @@
 port: 9191
 
 requests:
-  - url: wss://beta-dev-ws.kidtopi.com/ws
+  - url: wss://beta-uat-ws.kidtopi.com/ws
     isStomp: false
   - url: wss://beta-qa-ws.kidtopi.com/ws
     headers:
       - key: room-id
         value: 6e13e241-06f3-453b-a076-5b68ea1b6d0a
-      - key: heart-beat
-        value: 10000,10000
+      - key: authorization
+        value: Bearer abc123
     isStomp: true

@@ -17,8 +17,8 @@ public class MyStompClient extends StompClient {
 
   private boolean isConnecting;
 
-  private final boolean enableHeader;
-  private final Map<String, String> httpHeaders;
+  protected final boolean enableHeader;
+  protected final Map<String, String> httpHeaders;
 
   public MyStompClient(
       URI serverUri, Draft protocolDraft, Map<String, String> httpHeaders, int connectTimeout) {
@@ -75,6 +75,18 @@ public class MyStompClient extends StompClient {
       stompConnectionListener.onConnecting();
     }
 
+    Map<String, String> requestHeaders = buildHeaders();
+
+    send(new StompFrame(StompCommand.CONNECT, requestHeaders).toString());
+  }
+
+  @Override
+  public void send(String text) {
+    log.info("(send)text: {}", text);
+    super.send(text);
+  }
+
+  protected Map<String, String> buildHeaders(){
     Map<String, String> requestHeaders = new HashMap<>();
     requestHeaders.put(StompHeader.ACCEPT_VERSION.toString(), STOMP_VERSION);
     if(enableHeader){
@@ -84,12 +96,6 @@ public class MyStompClient extends StompClient {
       requestHeaders.put(entry.getKey(), entry.getValue());
     }
 
-    send(new StompFrame(StompCommand.CONNECT, requestHeaders).toString());
-  }
-
-  @Override
-  public void send(String text) {
-    log.info("(send)text: {}", text);
-    super.send(text);
+    return requestHeaders;
   }
 }
