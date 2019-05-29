@@ -1,4 +1,4 @@
-package com.github.icovn.exporter.websocket;
+package com.github.icovn.exporter.websocket.model;
 
 import java.util.List;
 import lombok.Data;

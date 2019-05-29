@@ -1,4 +1,4 @@
-package com.github.icovn.exporter.websocket;
+package com.github.icovn.exporter.websocket.client;
 
 import java.net.URI;
 import lombok.extern.slf4j.Slf4j;

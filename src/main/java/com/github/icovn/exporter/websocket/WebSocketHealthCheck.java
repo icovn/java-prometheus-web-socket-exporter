@@ -1,5 +1,10 @@
 package com.github.icovn.exporter.websocket;
 
+import com.github.icovn.exporter.websocket.client.MyOauthStompClient;
+import com.github.icovn.exporter.websocket.client.MyStompClient;
+import com.github.icovn.exporter.websocket.client.MyWebSocketClient;
+import com.github.icovn.exporter.websocket.model.SocketHeader;
+import com.github.icovn.exporter.websocket.model.SocketRequest;
 import com.github.icovn.util.ExceptionUtil;
 import com.github.strengthened.prometheus.healthchecks.HealthCheck;
 import com.github.strengthened.prometheus.healthchecks.HealthStatus;
@@ -35,6 +40,9 @@ public class WebSocketHealthCheck extends HealthCheck {
         log.info("(checkWebSocket)headers: {}", headers);
 
         MyStompClient client = new MyStompClient(uri, new Draft_6455(), headers, 5000);
+        if(request.getIsOauth()){
+          client = new MyOauthStompClient(uri, new Draft_6455(), headers, 5000, false, request.getId());
+        }
         log.info("(checkWebSocket)start connect");
         client.connectBlocking();
 

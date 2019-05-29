@@ -8,5 +8,11 @@ requests:
       - key: room-id
         value: 6e13e241-06f3-453b-a076-5b68ea1b6d0a
       - key: authorization
-        value: Bearer abc123
+        value: Bearer xyz
     isStomp: true
+
+    isOauth: true
+    id: 1
+    cron: 0/5 * * * * ?
+    refreshToken: abc
+    refreshUrl: https://beta-qa-api.kidtopi.com/auth/auth/refresh

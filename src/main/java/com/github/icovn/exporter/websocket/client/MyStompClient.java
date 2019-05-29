@@ -1,4 +1,4 @@
-package com.github.icovn.exporter.websocket;
+package com.github.icovn.exporter.websocket.client;
 
 import com.github.icovn.util.ExceptionUtil;
 import eu.mivrenik.stomp.StompCommand;
