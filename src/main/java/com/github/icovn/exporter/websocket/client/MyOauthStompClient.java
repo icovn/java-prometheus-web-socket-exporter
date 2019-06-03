@@ -34,9 +34,11 @@ public class MyOauthStompClient extends MyStompClient {
     for(Map.Entry<String, String> entry: httpHeaders.entrySet()){
       if(entry.getKey().equals("authorization")){
         String token = TokenStorage.getInstance().get(TokenConstant.ACCESS_TOKEN + id);
+        log.info("(buildHeaders)stored token: {}", token);
         if(token != null){
           requestHeaders.put(entry.getKey(), "Bearer " + token);
         }else {
+          log.info("(buildHeaders)config token: {}", entry.getValue());
           requestHeaders.put(entry.getKey(), entry.getValue());
         }
       }else {

@@ -64,6 +64,10 @@ public class Application {
           dataMap.put(TokenConstant.ID.name(), request.getId());
           dataMap.put(TokenConstant.REFRESH_TOKEN.name(), request.getRefreshToken());
           dataMap.put(TokenConstant.REFRESH_URL.name(), request.getRefreshUrl());
+          log.info("(initSchedule)request: {}, dataMap: {}", request, dataMap);
+
+          String refreshToken = dataMap.getString(TokenConstant.REFRESH_TOKEN.name());
+          log.info("(initSchedule)refreshToken: {}", refreshToken);
 
           // define the job and tie it to our HelloJob class
           JobDetail job = newJob(RefreshTokenJob.class)

@@ -32,6 +32,7 @@ public class RefreshTokenJob implements Job {
   @Override
   public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
     JobDataMap dataMap = jobExecutionContext.getJobDetail().getJobDataMap();
+    log.info("(execute)dataMap: {}", dataMap);
     String id = dataMap.getString(TokenConstant.ID.name());
     String refreshToken = dataMap.getString(TokenConstant.REFRESH_TOKEN.name());
     String refreshUrl = dataMap.getString(TokenConstant.REFRESH_URL.name());
@@ -39,8 +40,9 @@ public class RefreshTokenJob implements Job {
     log.info("(execute)refresh url: {}", refreshUrl);
 
     TokenResponse tokenResponse = refresh(refreshUrl, refreshToken);
+    log.info("(execute)tokenResponse: {}", tokenResponse);
     if(tokenResponse != null){
-      log.info("(execute)update token");
+      log.info("(execute)update token, tokenResponse: {}", tokenResponse);
       TokenStorage.getInstance().set(TokenConstant.ACCESS_TOKEN + id, tokenResponse.getAccessToken());
 
       dataMap.put(TokenConstant.REFRESH_TOKEN.name(), tokenResponse.getRefreshToken());
@@ -55,8 +57,10 @@ public class RefreshTokenJob implements Job {
         .post(body)
         .build();
     try (Response response = client.newCall(request).execute()) {
-      return MapperUtil.getMapper().readValue(response.body().string(), TokenResponse.class);
-    } catch (IOException|NullPointerException ex){
+      String responseBody = response.body().string();
+      log.info("(refresh)http code: {}, body: {}", response.code(), responseBody);
+      return MapperUtil.getMapper().readValue(responseBody, TokenResponse.class);
+    } catch (Exception ex){
       log.error("(refresh)ex: {}", ExceptionUtil.getFullStackTrace(ex, true));
       return null;
     }
